@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}AutoReco — À Propos{% endblock %}
+
+{% block extra_styles %}
+.feature-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 3px solid transparent;
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(59,130,246,0.13);
+}
+.feature-card.blue   { border-color: #3b82f6; }
+.feature-card.red    { border-color: #dc2626; }
+.feature-card.indigo { border-color: #6366f1; }
+
+.step-badge {
+  width: 2.2rem; height: 2.2rem;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: #fff;
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.tech-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { opacity: 0; animation: fadeUp 0.55s cubic-bezier(0.4,0,0.2,1) forwards; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.22s; }
+.delay-3 { animation-delay: 0.34s; }
+.delay-4 { animation-delay: 0.46s; }
+{% endblock %}
+
+{% block content %}
+
+  {# ── Hero ── #}
+  <div class="bg-white rounded-2xl shadow-xl p-10 text-center fade-up delay-1 mb-8">
+    <div class="text-5xl mb-4">🚗</div>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-3">À Propos d'AutoReco</h1>
+    <p class="text-gray-500 text-base leading-relaxed max-w-xl mx-auto">
+      AutoReco est une application web de recommandation automobile basée sur vos préférences
+      personnelles. Notez des marques, découvrez des statistiques en temps réel et affinez
+      vos choix en quelques clics.
+    </p>
+  </div>
+
+  {# ── Comment ça marche ── #}
+  <div class="bg-white rounded-2xl shadow-xl p-8 fade-up delay-2 mb-8">
+    <h2 class="text-2xl font-extrabold text-gray-900 mb-6">⚙️ Comment ça marche ?</h2>
+    <div class="space-y-5">
+      {% set etapes = [
+        ("Découvrez une marque",       "L'application vous présente une marque automobile aléatoire avec sa photo."),
+        ("Likez ou passez",            "Cliquez sur 👍 J'aime si la marque vous intéresse, ou ⏭️ Passer pour en voir une autre."),
+        ("Consultez les statistiques", "Le tableau se met à jour en temps réel avec vues, likes et taux d'appréciation."),
+        ("Recevez vos recommandations","L'algorithme apprend de vos préférences pour vous suggérer les marques les mieux adaptées.")
+      ] %}
+      {% for titre, desc in etapes %}
+      <div class="flex items-start gap-4">
+        <div class="step-badge">{{ loop.index }}</div>
+        <div>
+          <p class="font-semibold text-gray-800">{{ titre }}</p>
+          <p class="text-gray-500 text-sm mt-0.5">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ── Fonctionnalités clés ── #}
+  <div class="fade-up delay-3 mb-8">
+    <h2 class="text-2xl font-extrabold text-white mb-5">✨ Fonctionnalités clés</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {% set features = [
+        ("blue",   "📊", "Stats en temps réel",   "Vues, likes et taux mis à jour instantanément sans rechargement de page."),
+        ("red",    "🎯", "Recommandation ciblée", "L'algorithme tient compte de vos likes pour affiner les suggestions au fil du temps."),
+        ("indigo", "⚡", "Interface rapide",       "Expérience fluide grâce à des appels API asynchrones — aucun rechargement nécessaire.")
+      ] %}
+      {% for couleur, icone, titre, desc in features %}
+      <div class="feature-card {{ couleur }}">
+        <div class="text-3xl mb-3">{{ icone }}</div>
+        <h3 class="font-bold text-gray-800 mb-1">{{ titre }}</h3>
+        <p class="text-gray-500 text-sm">{{ desc }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ── Stack technique ── #}
+  <div class="bg-white rounded-2xl shadow-xl p-8 fade-up delay-4">
+    <h2 class="text-2xl font-extrabold text-gray-900 mb-5">🛠️ Stack technique</h2>
+    <div class="flex flex-wrap gap-3 mb-5">
+      {% for tech in ["🐍 Python / Flask", "🌐 Jinja2", "🎨 Tailwind CSS", "⚡  JavaScript (Fetch API)", "🗄️ SQLite / JSON"] %}
+        <span class="tech-pill">{{ tech }}</span>
+      {% endfor %}
+    </div>
+    <p class="text-gray-400 text-sm">
+      Le backend Flask gère les routes, la logique de recommandation et la persistance des votes.
+      Le frontend communique via des requêtes
+      <code class="bg-gray-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">POST /click</code>
+      pour mettre à jour les statistiques sans rechargement.
+    </p>
+  </div>
+
+{% endblock %}

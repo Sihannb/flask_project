@@ -1,0 +1,35 @@
+<h2 class="text-lg font-bold mb-5 text-gray-800">📊 Statistiques</h2>
+<div class="overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <thead>
+      <tr class="text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100">
+        <th class="pb-3 px-2">Marque</th>
+        <th class="pb-3 px-2">Vues</th>
+        <th class="pb-3 px-2">Likes</th>
+        <th class="pb-3 px-2">Taux</th>
+        <th class="pb-3 px-2 min-w-[160px]">Performance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in stats %}
+      <tr data-nom="{{ s.nom }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+        <td class="px-2 py-4 font-semibold text-gray-900">{{ s.nom }}</td>
+        <td class="vues px-2 py-4 text-gray-500">{{ s.vues }}</td>
+        <td class="score px-2 py-4 text-gray-500">{{ s.score }}</td>
+        <td class="taux px-2 py-4"><span class="taux-pill">{{ "%.1f"|format(s.taux) }}%</span></td>
+        <td class="barre px-2 py-4">
+          <div class="flex items-center gap-2">
+            <div class="progress-track flex-1">
+              <div class="progress-fill" style="width: {{ s.taux }}%"></div>
+            </div>
+            {% if s.taux >= 75 %}<span class="perf-badge perf-excellent">● Top</span>
+            {% elif s.taux >= 50 %}<span class="perf-badge perf-good">● Bon</span>
+            {% elif s.taux >= 25 %}<span class="perf-badge perf-average">● Moyen</span>
+            {% else %}<span class="perf-badge perf-low">● Faible</span>{% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

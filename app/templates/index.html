@@ -1,0 +1,180 @@
+{% extends 'base.html' %} 
+{% block title %}AutoReco — Accueil{% endblock %} 
+
+{% block extra_styles %} 
+.progress-track { 
+  background: #f1f5f9; 
+  border-radius: 999px; 
+  height: 8px; 
+  overflow: hidden; 
+} 
+.progress-fill { 
+  height: 100%;
+  border-radius: 999px; 
+  background: linear-gradient(90deg,#3b82f6,#6366f1,#8b5cf6); 
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite; 
+  transition: width 0.6s;
+} 
+.taux-pill {
+  background: linear-gradient(135deg,#eff6ff,#e0e7ff); 
+  color: #4338ca;
+  border: 1px solid #c7d2fe; 
+  border-radius: 999px; 
+  padding: 3px 10px; 
+  font-size: 12px;
+  font-weight: 700; 
+} 
+@keyframes shimmer { 
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* === Animations boutons === */
+@keyframes pop {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.88); }
+  60%  { transform: scale(1.12); }
+  80%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+.btn-pop { animation: pop 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards; }
+
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transform: scale(0);
+  animation: ripple 0.5s linear;
+  pointer-events: none;
+}
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+}
+.feedback {
+  position: absolute;
+  font-size: 22px;
+  pointer-events: none;
+  animation: floatUp 0.7s ease forwards;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+{% endblock %} 
+
+{% block content %}
+<div class="bg-white p-8 rounded-2xl shadow-xl">
+  <h1 class="text-3xl font-extrabold mb-8 text-center text-gray-900">
+    🚗 Marques Suggérées
+  </h1>
+
+  <div class="text-center mb-8">
+    <img
+      id="marque-img"
+      src="{{ url_for('static', filename='images/' + marque|lower + '.jpg') }}"
+      alt="{{ marque }}"
+      class="w-80 h-50 object-cover rounded-xl mx-auto mb-4 shadow-lg"
+      onerror="this.src = '/static/images/default.jpg'"
+    />
+    <p class="text-gray-400 mb-2 text-xs uppercase tracking-widest">
+      Que pensez-vous de
+    </p>
+    <h2 id="marque" class="text-4xl font-extrabold text-blue-600 mb-6">
+      {{ marque }}
+    </h2>
+    <div class="flex justify-center space-x-4">
+      <button
+        id="like"
+        class="relative overflow-hidden bg-blue-900 text-white px-8 py-3 rounded-full font-semibold shadow-lg"
+      >
+        👍 J'aime
+      </button>
+      <button
+        id="skip"
+        class="relative overflow-hidden bg-red-500 text-white px-8 py-3 rounded-full font-semibold shadow"
+      >
+        ⏭️ Passer
+      </button>
+    </div>
+  </div>
+
+  <hr class="my-6 border-gray-100" />
+
+  {% include 'components/_stats_table.html' %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const likeBtn = document.getElementById("like");
+  const skipBtn = document.getElementById("skip");
+  const marqueElem = document.getElementById("marque");
+
+  function animateBtn(btn, emoji) {
+    btn.classList.remove("btn-pop");
+    void btn.offsetWidth;
+    btn.classList.add("btn-pop");
+
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    const size = Math.max(btn.offsetWidth, btn.offsetHeight);
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${btn.offsetWidth/2 - size/2}px;top:${btn.offsetHeight/2 - size/2}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+
+    const fb = document.createElement("span");
+    fb.className = "feedback";
+    fb.textContent = emoji;
+    btn.appendChild(fb);
+    setTimeout(() => fb.remove(), 700);
+  }
+
+  async function sendClick(action) {
+    const response = await fetch("/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ marque: marqueElem.textContent.trim(), action }),
+    });
+    const data = await response.json();
+    if (!data || !data.marque) return;
+    updatePage(data);
+  }
+
+  likeBtn.addEventListener("click", () => { animateBtn(likeBtn, "❤️"); sendClick("like"); });
+  skipBtn.addEventListener("click", () => { animateBtn(skipBtn, "💨"); sendClick("skip"); });
+
+  function getPerfBadge(taux) {
+    if (taux >= 75) return '<span class="perf-badge perf-excellent">● Top</span>';
+    if (taux >= 50) return '<span class="perf-badge perf-good">● Bon</span>';
+    if (taux >= 25) return '<span class="perf-badge perf-average">● Moyen</span>';
+    return '<span class="perf-badge perf-low">● Faible</span>';
+  }
+
+  function updatePage(data) {
+    marqueElem.textContent = data.marque;
+
+    const img = document.getElementById("marque-img");
+    img.src = `/static/images/${data.marque.toLowerCase()}.jpg`;
+    img.alt = data.marque;
+
+    data.stats.forEach((s) => {
+      const row = document.querySelector(`tr[data-nom='${s.nom}']`);
+      if (!row) return;
+
+      row.querySelector(".vues").textContent = s.vues;
+      row.querySelector(".score").textContent = s.score;
+      row.querySelector(".taux .taux-pill").textContent = s.taux.toFixed(1) + "%";
+
+      row.querySelector(".barre").innerHTML = `
+        <div class="flex items-center gap-2">
+          <div class="progress-track flex-1">
+            <div class="progress-fill" style="width: ${s.taux}%"></div>
+          </div>
+          ${getPerfBadge(s.taux)}
+        </div>`;
+    });
+  }
+</script>
+{% endblock %}
