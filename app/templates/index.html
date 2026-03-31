@@ -62,6 +62,12 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+ @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  #marquee-track:hover { animation-play-state: paused; }
 {% endblock %} 
 
 {% block content %}
@@ -103,6 +109,25 @@
   <hr class="my-6 border-gray-100" />
 
   {% include 'components/_stats_table.html' %}
+
+    <!-- ===== Défilement automatique des marques ===== -->
+  <div class="mt-8 overflow-hidden" style="mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);">
+    <div id="marquee-track" class="flex gap-3" style="width: max-content; animation: marquee 30s linear infinite;">
+      {% set marques = ['Toyota','Volkswagen','Renault','Peugeot','BMW','Mercedes','Audi','Ford','Hyundai','Kia','Nissan','Honda','Volvo','Citroën','Opel','Skoda','Seat','Fiat','Tesla','Porsche'] %}
+      {% for m in (marques * 2) %}
+      <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 shrink-0 shadow-sm hover:border-blue-400 hover:bg-blue-50 transition-colors duration-200 cursor-default">
+        <img
+          src="/static/images/{{ m | lower }}.jpg"
+          onerror="this.src='/static/images/default.jpg'"
+          class="w-6 h-6 rounded-full object-cover"
+          alt="{{ m }}"
+        />
+        <span class="text-sm font-semibold text-gray-700">{{ m }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
