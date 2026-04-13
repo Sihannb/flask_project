@@ -1,9 +1,10 @@
 from app.repositories.marque_repository import (
     get_all,
     get_random,
-    increment_vues,
     increment_likes,
+    increment_skips,
 )
+from app.models.marque import Marque
 
 
 def get_stats():
@@ -13,14 +14,18 @@ def get_stats():
 def get_next_marque():
     marque = get_random()
     if marque:
-        increment_vues(marque.nom)
-        return marque.nom
-    return "Inconnue"  # ✅ fallback réel
+        return marque.nom  # ← on retire l'incrément de vues ici
+    return "Inconnue"
+
 
 def handle_click(nom: str, action: str):
-    nom = nom.strip() #nettoie les espaces invisibles
-    
+    nom = nom.strip()
+
     if action == "like":
-        increment_likes(nom)
-    nouvelle_marque = get_next_marque()
-    return {"marque": nouvelle_marque, "stats": get_stats()}  # ✅ toujours un dict valide
+        increment_likes(nom)  # ← incrémente likes + vues
+    elif action == "skip":
+        increment_skips(nom)  # ← incrémente vues uniquement
+
+        nouvelle_marque = get_next_marque()
+
+        return {"marque": nouvelle_marque, "stats": get_stats()}

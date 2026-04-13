@@ -82,6 +82,7 @@
       src="{{ url_for('static', filename='images/' + marque|lower + '.jpg') }}"
       alt="{{ marque }}"
       class="w-80 h-50 object-cover rounded-xl mx-auto mb-4 shadow-lg"
+      loading="lazy"
       onerror="this.src = '/static/images/default.jpg'"
     />
     <p class="text-gray-400 mb-2 text-xs uppercase tracking-widest">
@@ -110,23 +111,7 @@
 
   {% include 'components/_stats_table.html' %}
 
-    <!-- ===== Défilement automatique des marques ===== -->
-  <div class="mt-8 overflow-hidden" style="mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);">
-    <div id="marquee-track" class="flex gap-3" style="width: max-content; animation: marquee 30s linear infinite;">
-      {% set marques = ['Toyota','Volkswagen','Renault','Peugeot','BMW','Mercedes','Audi','Ford','Hyundai','Kia','Nissan','Honda','Volvo','Citroën','Opel','Skoda','Seat','Fiat','Tesla','Porsche'] %}
-      {% for m in (marques * 2) %}
-      <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 shrink-0 shadow-sm hover:border-blue-400 hover:bg-blue-50 transition-colors duration-200 cursor-default">
-        <img
-          src="/static/images/{{ m | lower }}.jpg"
-          onerror="this.src='/static/images/default.jpg'"
-          class="w-6 h-6 rounded-full object-cover"
-          alt="{{ m }}"
-        />
-        <span class="text-sm font-semibold text-gray-700">{{ m }}</span>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
+  
 
 </div>
 {% endblock %}
