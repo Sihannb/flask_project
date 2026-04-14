@@ -15,18 +15,18 @@ class Marque:
 
     def to_dict(self):
         return {
-    "nom": self.nom,
-    "vues": self.vues,
-    "score": self.likes,
-    "taux": self.taux
-}
+            "nom": self.nom,
+            "vues": self.vues,
+            "score": self.likes,
+            "taux": self.taux,
+        }
 
-# 🔹 Convertir un dict Supabase → objet Marque
+    # 🔹 Convertir un dictionnaire Supabase → objet Marque
     @staticmethod
     def from_dict(data: dict):
         return Marque(
-    id=data.get("id"),
-    nom=data.get("nom"),
-    vues=data.get("vues", 0),
-    likes=data.get("likes", 0)
-)
+            id=data.get("id"),
+            nom=data.get("nom"),
+            vues=data.get("vues", 0),
+            likes=data.get("likes", 0),
+        )

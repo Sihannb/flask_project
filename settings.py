@@ -11,7 +11,7 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         "connect_args": {
             "connect_timeout": 15,
-            "sslmode": "require",        # ← Ajout obligatoire pour Supabase
+            "sslmode": "require",  # ← Ajout obligatoire pour Supabase
         },
         "pool_pre_ping": True,
         "pool_recycle": 300,
@@ -27,7 +27,7 @@ class DevelopmentConfig(Config):
         },
         "pool_pre_ping": True,
         "pool_recycle": 300,
-        "echo": True,                    # ← Affiche les requêtes SQL en dev
+        "echo": True,  # ← Affiche les requêtes SQL en dev
     }
 
 
@@ -40,7 +40,7 @@ class ProductionConfig(Config):
         },
         "pool_pre_ping": True,
         "pool_recycle": 300,
-        "pool_size": 5,                  # ← Limite les connexions en prod
+        "pool_size": 5,  # ← Limite les connexions en prod
         "max_overflow": 10,
     }
 
@@ -48,5 +48,5 @@ class ProductionConfig(Config):
 config = {
     "development": DevelopmentConfig,
     "production": ProductionConfig,
-    "default": DevelopmentConfig
+    "default": DevelopmentConfig,
 }

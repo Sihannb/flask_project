@@ -4,7 +4,6 @@ from app.repositories.marque_repository import (
     increment_likes,
     increment_skips,
 )
-from app.models.marque import Marque
 
 
 def get_stats():
