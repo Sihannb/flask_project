@@ -2,6 +2,7 @@ from flask import Flask
 from settings import config
 from app.extensions import init_supabase
 from app.controllers.marque_controller import marque_bp
+from app.repositories.marque_repository import init_db
 
 
 def create_app(config_name="default"):
@@ -10,7 +11,10 @@ def create_app(config_name="default"):
 
     init_supabase(app)
 
-    # ✅ Enregistre les routes
-    app.register_blueprint(marque_bp)
+    with app.app_context():
+        init_db()  # ✅ insère les données initiales
 
-    return app
+        # ✅ Enregistre les routes
+        app.register_blueprint(marque_bp)
+
+        return app
