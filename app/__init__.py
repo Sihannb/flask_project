@@ -8,7 +8,6 @@ def create_app(config_name="default"):
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(config[config_name])
 
-    # ✅ Initialise Supabase (léger → OK)
     init_supabase(app)
 
     # ✅ Enregistre les routes
