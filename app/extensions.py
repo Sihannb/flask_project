@@ -9,7 +9,6 @@ def init_supabase(app):
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_ANON_KEY")
 
-    # ✅ Vérification obligatoire
     if not url or not key:
         raise Exception("❌ SUPABASE_URL ou SUPABASE_ANON_KEY manquant")
 
